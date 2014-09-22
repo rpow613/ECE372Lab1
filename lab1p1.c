@@ -35,12 +35,16 @@ int main(void)
 
 	// TODO: Configure AD1PCFG register for configuring input pins between analog input
 	// and digital IO.
-        AD1PCFG=0xFFFF;
+        AD1PCFG=0xFFFF;         //Configure analog input pins to digital IO
 
 	// TODO: Configure TRIS register bits for Right and Left LED outputs.
-        TRISBbits.TRISB0=0;
-        TRISBbits.TRISB1=0;
+
+        TRISBbits.TRISB0=0;     //Set Right LED pin to output
+        TRISBbits.TRISB1=0;     //Set Left LED pin to output
+
 	// TODO: Configure LAT register bits to initialize Right LED to on.
+        LATBbits.LATB0=0;
+
 
 	// TODO: Configure ODC register bits to use open drain configuration for Right
 	// and Left LED output.
