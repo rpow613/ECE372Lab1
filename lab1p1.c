@@ -39,15 +39,16 @@ int main(void)
 
 	// TODO: Configure TRIS register bits for Right and Left LED outputs.
 
-        TRISBbits.TRISB0=0;     //Set Right LED pin to output
-        TRISBbits.TRISB1=0;     //Set Left LED pin to output
+        TRISAbits.TRISA0=0;     //Set Right LED pin to output
+        TRISAbits.TRISA1=0;     //Set Left LED pin to output
 
 	// TODO: Configure LAT register bits to initialize Right LED to on.
-        LATBbits.LATB0=0;
+        LATAbits.LATA0=0;
 
 
 	// TODO: Configure ODC register bits to use open drain configuration for Right
 	// and Left LED output.
+        
 
 	// TODO: Configure TRIS register bits for swtich input.
 
