@@ -38,8 +38,8 @@ int main(void)
         AD1PCFG=0xFFFF;
 
 	// TODO: Configure TRIS register bits for Right and Left LED outputs.
-        TRISBbits.TRISB0=0;
-        TRISBbits.TRISB1=0;
+        TRISAbits.TRISA0 = 1;
+        TRISAbits.TRISA1 = 1;
 	// TODO: Configure LAT register bits to initialize Right LED to on.
 
 	// TODO: Configure ODC register bits to use open drain configuration for Right
