@@ -42,6 +42,7 @@ int main(void)
         TRISAbits.TRISA0=0;     //Set Right LED pin to output
         TRISAbits.TRISA1=0;     //Set Left LED pin to output
 
+
 	// TODO: Configure LAT register bits to initialize Right LED to on.
         LATAbits.LATA0=0;
 
