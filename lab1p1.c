@@ -45,18 +45,24 @@ int main(void)
 
 	// TODO: Configure LAT register bits to initialize Right LED to on.
         LATAbits.LATA0=0;
+        LATAbits.LATA1=1;
 
 
 	// TODO: Configure ODC register bits to use open drain configuration for Right
 	// and Left LED output.
-        
+        ODCAbits.ODA0=1; //open drain enable for A0
+        ODCAbits.ODA1=1; //open drain enable for A1
 
 	// TODO: Configure TRIS register bits for swtich input.
+        TRISBbits.TRISB2 = 1;
 
 	// TODO: Configure CNPU register bits to enable internal pullup resistor for switch
 	// input.
+        CNPU1bits.CN6PUE = 1;
 
 	// TODO: Setup Timer 1 to use internal clock (Fosc/2).
+        TMR1=0;
+        T1CONbits.TON=1;
 
 	// TODO: Setup Timer 1's prescaler to 1:256.
 
