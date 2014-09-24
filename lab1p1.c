@@ -35,17 +35,19 @@ int main(void)
 
 	// TODO: Configure AD1PCFG register for configuring input pins between analog input
 	// and digital IO.
-        AD1PCFG=0xFFFF;         //Configure analog input pins to digital IO
+        AD1PCFG=0xFFFF;     // Sets AD1PCFG register to digital IO
 
 	// TODO: Configure TRIS register bits for Right and Left LED outputs.
-
-        TRISAbits.TRISA0=0;     //Set Right LED pin to output
-        TRISAbits.TRISA1=0;     //Set Left LED pin to output
-
+        TRISAbits.TRISA0 = 0;     // Set Right LED pin to output
+        TRISAbits.TRISA1 = 0;     // Set Left LED pin to output
 
 	// TODO: Configure LAT register bits to initialize Right LED to on.
+<<<<<<< HEAD
         LATAbits.LATA0=0;
         LATAbits.LATA1=1;
+=======
+        LATAbits.LATA0 = 0;       // Sets the LAT register bits to turn the Right LED on
+>>>>>>> FETCH_HEAD
 
 
 	// TODO: Configure ODC register bits to use open drain configuration for Right
@@ -67,6 +69,7 @@ int main(void)
 	// TODO: Setup Timer 1's prescaler to 1:256.
 
  	// TODO: Set Timer 1 to be initially off.
+    
 
 	// TODO: Clear Timer 1 value and reset interrupt flag
 

@@ -1,3 +1,13 @@
 ece372lab1.pdf
 
 Lab1.pdf
+
+Lab1.X/Makefile
+
+*.xml
+
+*.mk
+
+*.properties
+
+Lab1.X/nbproject/Package-default.bash
