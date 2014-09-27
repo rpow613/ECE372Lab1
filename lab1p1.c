@@ -62,11 +62,20 @@ int main(void)
         T1CONbits.TON = 1;
 
 	// TODO: Setup Timer 1's prescaler to 1:256.
+        T1CONbits.TCKPS0 = 1;
+        T1CONbits.TCKPS1 = 1;
+
 
  	// TODO: Set Timer 1 to be initially off.
-    
+        T1CONbits.TON = 0;
+
+        // T1CON = 0x8030; is a good reference for some of the above code from page 20 of timer slides
 
 	// TODO: Clear Timer 1 value and reset interrupt flag
+        TMR1 = 0;
+        IFS0bits.T1IF = 0;
+
+
 
 	// TODO: Set Timer 1's period value register to value for 5 ms.
 
