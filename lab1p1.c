@@ -80,21 +80,21 @@ int main(void)
 // and digital IO.
 	//I05 is RB2 //pin number six on j2
 
-	AD1PCFGbits.PCFG5 = 1
+	AD1PCFGbits.PCFG5 = 1;
 
 // TODO: Configure TRIS register bits for Right and Left LED outputs.
 	//I01 is RA0 and j PIN 2
 	//need to be output digital
-	TRISAbits.TRISA0= 0 ; //output set
-	LATAbits.LATA0 = 1 ; //might turn pin on as pin is ground
-	AD1PCFGbits.PCFG0=1; //set to digital
+	TRISAbits.TRISA0 = 0; //output set
+	LATAbits.LATA0 = 1; //might turn pin on as pin is ground
+	AD1PCFGbits.PCFG0 = 1; //set to digital
 
 
 	//I02 is RA1 and j PIN 3
 	//dig out
-	TRISAbits.TRISA1= 0 ;
-	LATAbits.LATA1 = 0 ;	//enable led a1 to on
-	AD1PCFGbits.PCFG1 =1; //set to digital
+	TRISAbits.TRISA1 = 0;
+	LATAbits.LATA1 = 0;	//enable led a1 to on
+	AD1PCFGbits.PCFG1 = 1; //set to digital
 
 
 // TODO: Configure LAT register bits to initialize Right LED to on.
@@ -140,9 +140,9 @@ int main(void)
 		// LED is illuminate (on).
 		if(PORTBbits.RB2 == 0)
 		{
-			delay();
+			DebounceDelay();
 			while(PORTBbits.RB2 == 0);
-			delay();
+			DebounceDelay();
 			LATA ^= 0x0002;  //toggles leds a0 and a1;
 		}
 
