@@ -53,11 +53,10 @@ void DebounceDelay() {
 	IFS0bits.T1IF=0;
 	T1CONbits.TON=1;
 	
-	while(IFS0bits.T1IF==0); //while loop will cycle until flag for timer one becomes 1
+	while(IFS0bits.T1IF == 0); // while loop will cycle until flag for timer one becomes 1
 
-	T1CONbits.TON=0;	//turn off timer
-	IFS0bits.T1IF=0;	//reset flag
-		
+	T1CONbits.TON=0;	// turn off timer
+	IFS0bits.T1IF=0;	// reset flag
 
 
 // TODO: Use Timer 1 to create a precise 5 ms delay.
@@ -80,25 +79,24 @@ int main(void)
 // and digital IO.
 	//I05 is RB2 //pin number six on j2
 
-	AD1PCFGbits.PCFG5 = 1;
-
+	AD1PCFGbits.PCFG4 = 1;
 // TODO: Configure TRIS register bits for Right and Left LED outputs.
 	//I01 is RA0 and j PIN 2
 	//need to be output digital
 	TRISAbits.TRISA0 = 0; //output set
 	LATAbits.LATA0 = 1; //might turn pin on as pin is ground
-	AD1PCFGbits.PCFG0 = 1; //set to digital
+//	AD1PCFGbits.PCFG0 = 1; //set to digital
 
 
 	//I02 is RA1 and j PIN 3
 	//dig out
 	TRISAbits.TRISA1 = 0;
 	LATAbits.LATA1 = 0;	//enable led a1 to on
-	AD1PCFGbits.PCFG1 = 1; //set to digital
+//	AD1PCFGbits.PCFG1 = 1; //set to digital
 
 
 // TODO: Configure LAT register bits to initialize Right LED to on.
-	LATAbits.LATA1 = 0; //turn right led on or off need to check
+	//LATAbits.LATA1 = 0; //turn right led on or off need to check
 
 
 // TODO: Configure ODC register bits to use open drain configuration for Right
@@ -111,28 +109,32 @@ int main(void)
 	TRISBbits.TRISB2 = 1;
 
 // TODO: Configure CNPU register bits to enable internal pullup resistor for switch input.
-	CNPU1bits.CN7PUE = 1;
-
+//	CNPU1bits.CN7PUE = 1;  // We should look into this
+        CNPU1bits.CN6PUE = 1;
 
 
 // TODO: Setup Timer 1 to use internal clock (Fosc/2).
-	T1CONbits.TCS=0;
+	T1CONbits.TCS = 0;
 	T1CONbits.TGATE = 0;
 
 // TODO: Setup Timer 1's prescaler to 1:256.
-	T1CONbits.TCKPS=1 ;   //prescale of 8
-
+//	T1CONbits.TCKPS = 1;   //prescale of 8
+//	T1CONbits.TCKPS = 3;   //prescale of 8
+	T1CONbits.TCKPS0 = 1;   //prescale of 256
+        T1CONbits.TCKPS1 = 1;   //prescale of 256
 
 // TODO: Set Timer 1 to be initially off.
-	T1CONbits.TON=0;
+	T1CONbits.TON = 0;
 
 // TODO: Clear Timer 1 value and reset interrupt flag
-	TMR1=0;
+	TMR1 = 0;
 
-	IFS0bits.T1IF=0; 
+	IFS0bits.T1IF = 0;
+        IEC0bits.T1IE = 1;  // enabling the timer (Ian's suggestion)
 
 // TODO: Set Timer 1's period value register to value for 5 ms. 
-	PR1=9216;  //with prescale of 8 only need 9216
+//	PR1 = 9216;  //with prescale of 8 only need 9216
+	PR1 = 287;  //with prescale of 256 only need 287
 
 	while(1)
 	{
@@ -141,9 +143,10 @@ int main(void)
 		if(PORTBbits.RB2 == 0)
 		{
 			DebounceDelay();
-			while(PORTBbits.RB2 == 0);
+			while(PORTBbits.RB2 == 0) {
 			DebounceDelay();
-			LATA ^= 0x0002;  //toggles leds a0 and a1;
+                        }
+                        LATA ^= 0x0003;  //toggles leds a0 and a1;
 		}
 
 		// TODO: Use DebounceDelay() function to debounce button press 
