@@ -87,7 +87,7 @@ int main(void)
 	//I01 is RA0 and j PIN 2
 	//need to be output digital
 	TRISAbits.TRISA0 = 0; //output set
-	LATAbits.LATA0 = 0; //might turn pin on as pin is ground
+	LATAbits.LATA0 = 1; //might turn pin on as pin is ground
 	//AD1PCFGbits.PCFG0 = 1; //set to digital
 
 
@@ -100,7 +100,7 @@ int main(void)
 
 
 // TODO: Configure LAT register bits to initialize Right LED to on.
-	LATAbits.LATA1 = 1; //turn right led on or off need to check
+	LATAbits.LATA1 = 0; //turn right led on or off need to check
 
 
 // TODO: Configure ODC register bits to use open drain configuration for Right
