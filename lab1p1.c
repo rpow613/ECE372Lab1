@@ -120,9 +120,9 @@ int main(void)
 	T1CONbits.TGATE = 0;
 
 // TODO: Setup Timer 1's prescaler to 1:256.
-	T1CONbits.TCKPS1=1 ;   //prescale of 256
-
-        T1CONbits.TCKPS0=1 ;
+	T1CONbits.TCKPS1 = 1;   //prescale of 256
+        T1CONbits.TCKPS0 = 1;
+        //T1CONbits.TCKPS = 11;
 // TODO: Set Timer 1 to be initially off.
 	T1CONbits.TON=0;
 

@@ -43,7 +43,9 @@ void DelayUs(unsigned int usDelay) {
 	// one microsecond delay, and multiply this by the input variable.
 	// Be sure to user integer values only.
 /**********************************************/
-
+    T2CONbits.TCKPS1 = 0;   // prescale of 8
+    T2CONbits.TCKPS0 = 1;
+    PR2 = 0.8432*usDelay;   // 1,8,64,256  we tried using prescaler of 8
 
 /*****************************************************/
 }
@@ -88,6 +90,33 @@ void WriteLCD(unsigned char word, unsigned commandType, unsigned usDelay) {
 	// TODO: Using bit masking and shift operations, write most significant bits to correct
 	// bits of the LCD_D signal (i.e. #define used to map internal name to LATB)
 	// and enable the LCD for the correct command.
+
+    LCD_D ^= (>>word);
+
+
+//#define LCD_D   LATB
+//#define LCD_RS  LATBbits.LATB7
+//#define LCD_E   LATBbits.LATB6
+//
+//// ******************************************************************************************* //
+//
+//// TRIS register mappings for LCD signals
+//#define LCD_TRIS_D7  TRISBbits.TRISB15
+//#define LCD_TRIS_D6  TRISBbits.TRISB14
+//#define LCD_TRIS_D5  TRISBbits.TRISB13
+//#define LCD_TRIS_D4  TRISBbits.TRISB12
+//#define LCD_TRIS_RS  TRISBbits.TRISB7
+//#define LCD_TRIS_E   TRISBbits.TRISB6
+//
+//// ******************************************************************************************* //
+//
+//// Defines LCD write types for EnableLCD function that will be assigned to RS LCD input
+//// used to specific writing control instructions or data characters.
+//#define LCD_WRITE_DATA    1
+//#define LCD_WRITE_CONTROL 0
+
+
+
 
 	// TODO: Using bit masking and shift operations, write least significant bits to correct
 	// bits of the LCD_D signal (i.e. #define used to map internal name to LATB)
