@@ -45,9 +45,11 @@ void Setup_UART1(void);
 // ******************************************************************************************* //
 
 
-volatile int flag = 0;
+volatile int flag = 0;      //variable that stops while loop in DebounceDelay()/
 
-//Use DebounceDelay() function to debounce button press
+// ******************************************************************************************* //
+
+//DebounceDelay() function to debounces button press
 // and button release in software.
 void DebounceDelay() {
 	TMR1=0;
@@ -76,9 +78,8 @@ int main(void)
 
 // Configure AD1PCFG register for configuring input pins between analog input
 // and digital IO.
-	//I05 is RB2 //pin number six on j2
 
-	AD1PCFGbits.PCFG4 = 1;
+	AD1PCFGbits.PCFG4 = 1;      //digital setting for switch
 
 //  Configure TRIS register bits for Right and Left LED outputs.
 	//I01 is RA0 and j PIN 2
@@ -100,6 +101,9 @@ int main(void)
 
 
 // Configure TRIS register bits for swtich input.
+    //I05 is RB2
+    //pin number six on j2
+
 	TRISBbits.TRISB2 = 1;
 
 // Configure CNPU register bits to enable internal pullup resistor for switch input.
@@ -138,7 +142,7 @@ int main(void)
 		{
                     LATA ^= 0x0003;  //toggles leds a0 and a1;
                     DebounceDelay();
-			while(PORTBbits.RB2 == 0)
+			while(PORTBbits.RB2 == 0) //wait for switch release
                       {
 			DebounceDelay();
 
