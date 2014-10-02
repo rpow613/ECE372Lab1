@@ -47,19 +47,18 @@ void Setup_UART1(void);
 
 volatile int flag = 0;
 
-
+//Use DebounceDelay() function to debounce button press
+// and button release in software.
 void DebounceDelay() {
 	TMR1=0;
 	T1CONbits.TON=1;
 
 	while(flag!=1); //while loop will cycle until flag for timer one becomes 1
         flag=0;
-	T1CONbits.TON=0;	//turn off timer
+        T1CONbits.TON=0;	//turn off timer
 		//reset flag
 
 
-
-// TODO: Use Timer 1 to create a precise 5 ms delay.
 
 }
 
@@ -75,65 +74,58 @@ int main(void)
 
 	// ****************************************************************************** //
 
-// TODO: Configure AD1PCFG register for configuring input pins between analog input
+// Configure AD1PCFG register for configuring input pins between analog input
 // and digital IO.
 	//I05 is RB2 //pin number six on j2
 
 	AD1PCFGbits.PCFG4 = 1;
 
-// TODO: Configure TRIS register bits for Right and Left LED outputs.
+//  Configure TRIS register bits for Right and Left LED outputs.
 	//I01 is RA0 and j PIN 2
-	//need to be output digital
-	TRISAbits.TRISA0 = 0; //output set
-	LATAbits.LATA0 = 1; //might turn pin on as pin is ground
-	//AD1PCFGbits.PCFG0 = 1; //set to digital
+    //I02 is RA1 and j PIN 3
+	TRISAbits.TRISA0 = 0; //set IO1 to output
+    TRISAbits.TRISA1 = 0; //set IO2 to output
+    
+    
+
+// Configure LAT register bits to initialize Right LED to on.
+    LATAbits.LATA0 = 0; //initialize red led to on
+	LATAbits.LATA1 = 1; //initialize green LED to off
 
 
-
-	//I02 is RA1 and j PIN 3
-	//dig out
-	TRISAbits.TRISA1 = 0;
-	//LATAbits.LATA1 = 0;	//enable led a1 to on
-	//AD1PCFGbits.PCFG1 = 1; //set to digital
-
-
-// TODO: Configure LAT register bits to initialize Right LED to on.
-	LATAbits.LATA1 = 0; //turn right led on or off need to check
-
-
-// TODO: Configure ODC register bits to use open drain configuration for Right
+// Configure ODC register bits to use open drain configuration for Right
 // and Left LED output.
 	ODCAbits.ODA0 = 1; //open drain enable for A0
 	ODCAbits.ODA1 = 1; //open drain enable	for A1
 
 
-// TODO: Configure TRIS register bits for swtich input.
+// Configure TRIS register bits for swtich input.
 	TRISBbits.TRISB2 = 1;
 
-// TODO: Configure CNPU register bits to enable internal pullup resistor for switch input.
+// Configure CNPU register bits to enable internal pullup resistor for switch input.
 	CNPU1bits.CN6PUE = 1;
 
 
 
-// TODO: Setup Timer 1 to use internal clock (Fosc/2).
+// Setup Timer 1 to use internal clock (Fosc/2).
 	T1CONbits.TCS=0;
 	T1CONbits.TGATE = 0;
 
-// TODO: Setup Timer 1's prescaler to 1:256.
+// Setup Timer 1's prescaler to 1:256.
 	T1CONbits.TCKPS1 = 1;   //prescale of 256
-        T1CONbits.TCKPS0 = 1;
-        //T1CONbits.TCKPS = 11;
-// TODO: Set Timer 1 to be initially off.
+    T1CONbits.TCKPS0 = 1;
+    
+// Set Timer 1 to be initially off.
 	T1CONbits.TON=0;
 
-// TODO: Clear Timer 1 value and reset interrupt flag
+// Clear Timer 1 value and reset interrupt flag
 	TMR1=0;
 
 	IFS0bits.T1IF=0;
-        IEC0bits.T1IE=1;
+    IEC0bits.T1IE=1;
 
-// TODO: Set Timer 1's period value register to value for 5 ms.
-	PR1=287;  //with prescale of 8 only need 9216
+// Set Timer 1's period value register to value for 5 ms.
+	PR1=287;  //for prescale of 256 need 287
 
 //        if(PORTBbits.RB2 == 0 )
 //        {LATA = 0x0000;}
@@ -154,14 +146,13 @@ int main(void)
                        
 		}
 
-		// TODO: Use DebounceDelay() function to debounce button press
-		// and button release in software.
+
 	}
 	return 0;
 }
 
 void __attribute__((interrupt,auto_psv)) _T1Interrupt(void){
-    
+   //set flag to 1 if interrupt occurs
     flag = 1;
     IFS0bits.T1IF = 0;
 
