@@ -1,4 +1,20 @@
-// ******************************************************************************************* //
+/**************************************************************************************************/
+
+/*
+ * File: Lab1Part2
+ * Team: Lambda^3
+ * Members: Chris Houseman
+ *          Randy Martinez
+ *          Rachel Powers
+ *          Chris Sanford
+ *
+ * Date: October 2, 2014
+ *
+ * Description: Code that runs stopwatch timer
+ *
+ */
+
+/**************************************************************************************************/
 // Include file for PIC24FJ64GA002 microcontroller. This include file defines
 // MACROS for special function registers (SFR) and control bits within those
 // registers.
@@ -46,15 +62,51 @@ _CONFIG2( IESO_OFF & SOSCSEL_SOSC & WUTSEL_LEG & FNOSC_PRIPLL & FCKSM_CSDCMD & O
 //           service routine but will be read in the main execution loop.
 //        2. Declared as unsigned char as the varaible will only store the values between
 //           0 and 10.
+//ADDED CODE
+volatile int state = 0; // variable to keep track of timer state
+//END ADDED CODE
 volatile unsigned char cnt;
 unsigned char command;
 // ******************************************************************************************* //
 
 int main(void)
 {
+    //ADDED CODE
+    // Configure AD1PCFG register for configuring input pins between analog input
+    // and digital IO.
+	AD1PCFGbits.PCFG4 = 1;      //digital setting for switch
 
-	// The following provides a demo configuration of Timer 1 in which
-	// the Timer 1 interrupt service routine will be executed every 1 second
+    // Configure TRIS register bits for Right and Left LED outputs.
+    // I01 is RA0 and j PIN 2
+    // I02 is RA1 and j PIN 3
+	TRISAbits.TRISA0 = 0; //set IO1 to output
+        TRISAbits.TRISA1 = 0; //set IO2 to output
+
+
+
+    // Configure LAT register bits to initialize Right LED to on.
+        LATAbits.LATA0 = 0; //initialize red led to on
+	LATAbits.LATA1 = 1; //initialize green LED to off
+
+
+    // Configure ODC register bits to use open drain configuration for Right
+    // and Left LED output.
+	ODCAbits.ODA0 = 1; //open drain enable for A0
+	ODCAbits.ODA1 = 1; //open drain enable	for A1
+
+
+    // Configure TRIS register bits for swtich input.
+    // I05 is RB2
+    // pin number six on j2
+	TRISBbits.TRISB2 = 1;
+
+    // Configure CNPU register bits to enable internal pullup resistor for switch input.
+	CNPU1bits.CN6PUE = 1;
+    //END ADDED CODE
+
+
+    // The following provides a demo configuration of Timer 1 in which
+    // the Timer 1 interrupt service routine will be executed every 1 second
 	PR1 = 57599;
 	TMR1 = 0;
 	IFS0bits.T1IF = 0;
@@ -100,6 +152,25 @@ int main(void)
 
 	while(1)
 	{
+        //ADDED CODE:
+            switch(state){
+                //State 0: Initialization State
+                case 0:
+                    //initaliza LCD, if RB2 is pressed, switch to start state
+                    LCDInitialize();
+                    break;
+                //State 1: Start Stopwatch
+                case 1:
+                    //turn on timer and display output value
+                    //if RB2 is pressed, switch to stop state
+                    //if RB(reset) is pressed, switch to 0 state
+                    break;
+                //State 2: Stop Stopwatch
+                case 2:
+                    //stop timer and wait for reset or start
+                    break;
+            }
+        //END ADDED CODE:
 //			  LCDMoveCursor(1,0);
 //            LCDPrintChar(cnt+'0');
 //            LCDMoveCursor(1,1);
@@ -148,4 +219,20 @@ void __attribute__((interrupt,auto_psv)) _T1Interrupt(void)
 /*******************************/
 }
 
+//ADDED CODE:
+void __attribute__((interrupt,auto_psv)) _CNInterrupt(void)
+{
+    // Clear CN interrupt flag to allow another CN interrupt to occur.
+    IFS1bits.CNIF = 0;
+    if(state == 0 && PORTBbits.RB2 == 1){
+        state = 1;
+    }
+    else if(state == 1 && PORTBbits.RB2 == 1){
+        state = 2;
+    }
+    else if(state == 2 && PORTBbits.RB2 == 1){
+        state = 1;
+    }
+}
+//END ADDED CODE
 // ******************************************************************************************* //
