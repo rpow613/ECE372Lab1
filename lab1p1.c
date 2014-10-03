@@ -1,3 +1,20 @@
+/**************************************************************************************************/
+
+/*
+ * File: Lab1Part1
+ * Team: Lambda^3
+ * Members: Chris Houseman
+ *          Randy Martinez
+ *          Rachel Powers
+ *          Chris Sanford
+ *
+ * Date: October 2, 2014
+ *
+ * Description: Program switches between LEDS based on button input. Button is debounced using
+ *              DebounceDelay() function
+ *
+ */
+
 // ******************************************************************************************* //
 // Include file for PIC24FJ64GA002 microcontroller. This include file defines
 // MACROS for special function registers (SFR) and control bits within those

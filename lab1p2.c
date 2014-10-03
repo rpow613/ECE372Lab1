@@ -2,6 +2,7 @@
 
 /*
  * File: Lab1Part2
+ * File: lab1p2.c
  * Team: Lambda^3
  * Members: Chris Houseman
  *          Randy Martinez
