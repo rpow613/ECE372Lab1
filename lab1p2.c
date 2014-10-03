@@ -105,7 +105,9 @@ int main(void)
 	CNPU1bits.CN6PUE = 1;
     //END ADDED CODE
 
-
+    //TODO: enable CN interrupts for switches
+    
+    
     // The following provides a demo configuration of Timer 1 in which
     // the Timer 1 interrupt service routine will be executed every 1 second
 	PR1 = 57599;
@@ -223,9 +225,11 @@ void __attribute__((interrupt,auto_psv)) _T1Interrupt(void)
 //ADDED CODE:
 void __attribute__((interrupt,auto_psv)) _CNInterrupt(void)
 {
-    // Clear CN interrupt flag to allow another CN interrupt to occur.
+//TODO: CHECK WHICH FLAG WAS SET
+    if (IFS1bits.CNIF ==1) {
+        // Clear CN interrupt flag to allow another CN interrupt to occur.
     IFS1bits.CNIF = 0;
-    if(state == 0 && PORTBbits.RB2 == 1){
+    if(state == 0 && PORTBbits.RB2 == 1){       //should this be debounced?
         state = 1;
     }
     else if(state == 1 && PORTBbits.RB2 == 1){
@@ -234,6 +238,11 @@ void __attribute__((interrupt,auto_psv)) _CNInterrupt(void)
     else if(state == 2 && PORTBbits.RB2 == 1){
         state = 1;
     }
+    }
+    else if(IFS1bits.CNIF==1)
+        if(PORTBbits.RB2==1) {
+            state=0;
+        }
 }
 //END ADDED CODE
 // ******************************************************************************************* //
