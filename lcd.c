@@ -182,17 +182,17 @@ void LCDInitialize(void) {
 
 	// TODO: Clear Display
 
-        WriteLCD(0x01, LCD_WRITE_CONTROL, 1800);
+        WriteLCD(0x01, LCD_WRITE_CONTROL, 1800); // 0001 0000
 
 	// TODO: Entry Mode Set
 	// Set Increment Display, No Shift (i.e. cursor move)
 
-        WriteLCD(0x06, LCD_WRITE_CONTROL, 44);
+        WriteLCD(0x06, LCD_WRITE_CONTROL, 44); // 0110 0000
 
 	// TODO: Display On/Off Control
 	// Turn Display (D) On, Cursor (C) Off, and Blink(B) Off
 
-        WriteLCD(0x0C, LCD_WRITE_CONTROL, 44);
+        WriteLCD(0x0C, LCD_WRITE_CONTROL, 44); // 1100 0000
 }
 
 // ******************************************************************************************* //
@@ -206,6 +206,8 @@ void LCDClear(void) {
 	// the proper delay is utilized.
 
     WriteLCD(0x01, LCD_WRITE_CONTROL, 1800);
+
+    LCDMoveCursor(0,0); //return cursor to the origin
 }
 
 // ******************************************************************************************* //
@@ -224,11 +226,14 @@ void LCDMoveCursor(unsigned char x, unsigned char y) {
 	// (x,y) coordinate. This operation should be performance as a single control
 	// control instruction, i.e. a single call the WriteLCD() function.
 
-    unsigned char tempx = (unsigned char) (64*(x-'0'));
-    unsigned char tempy = (unsigned char) (y-'0');
-    unsigned char totalShift =(unsigned char) (64 * (x - '0') + (y - '0') + 128);
+     //Return home
+    WriteLCD(0x02, LCD_WRITE_CONTROL, 40);
 
-    WriteLCD((unsigned char) ((64 * (x)) + (y) + 128), LCD_WRITE_CONTROL, 44);
+    //Shift to given coordinate
+    int i;
+    for(i=0; i = x*8 + y; i++) {
+        WriteLCD(0x14, LCD_WRITE_CONTROL, 40);
+    }
 
 }
 
