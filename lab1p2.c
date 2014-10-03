@@ -227,7 +227,7 @@ void __attribute__((interrupt,auto_psv)) _CNInterrupt(void)
 {
 //TODO: CHECK WHICH FLAG WAS SET
     if (IFS1bits.CNIF ==1) {
-        // Clear CN interrupt flag to allow another CN interrupt to occur.
+// Clear CN interrupt flag to allow another CN interrupt to occur.
     IFS1bits.CNIF = 0;
     if(state == 0 && PORTBbits.RB2 == 1){       //should this be debounced?
         state = 1;
