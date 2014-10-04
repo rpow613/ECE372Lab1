@@ -103,11 +103,16 @@ int main(void)
 
     // Configure CNPU register bits to enable internal pullup resistor for switch input.
 	CNPU1bits.CN6PUE = 1;
-    //END ADDED CODE
+
+    //Configure switch for reset
+
 
     //TODO: enable CN interrupts for switches
+        CNEN1bits.CN6IE = 1;
+        IFS1bits.CNIF = 0;
+        IEC1bits.CNIE = 1;
     
-    
+        //END ADDED CODE
     // The following provides a demo configuration of Timer 1 in which
     // the Timer 1 interrupt service routine will be executed every 1 second
 	PR1 = 57599;
