@@ -67,8 +67,8 @@ _CONFIG2( IESO_OFF & SOSCSEL_SOSC & WUTSEL_LEG & FNOSC_PRIPLL & FCKSM_CSDCMD & O
 volatile int state = 0; // variable to keep track of timer state
 //END ADDED CODE
 volatile unsigned char cnt;
-volatile unsigned char cnta=0;
-volatile unsigned char cntb=0;
+volatile unsigned char cnta;
+volatile unsigned char cntb;
 unsigned char command;
 // ******************************************************************************************* //
 
@@ -182,7 +182,7 @@ int main(void)
                 LCDPrintChar(cnt+'0');
                 //                  //given
                 if (cnt%100==0){
-                    cnta= 0;
+                    cnta= '0';
                     cntb++;
                     LCDMoveCursor(1,4);
                     LCDPrintChar(cntb+'0');
