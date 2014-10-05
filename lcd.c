@@ -1,4 +1,5 @@
 /**************************************************************************************************/
+
 /*
  * File: lcd.c
  * Team: Lambda^3
@@ -52,14 +53,14 @@
 
 void DelayUs(unsigned int usDelay) {
 
-    // TODO: Use Timer 2 to delay for precisely (as precise as possible) usDelay
-    // microseconds provided by the input variable.
-    //
-    // Hint: Determine the configuration for the PR1 setting that provides for a
-    // one microsecond delay, and multiply this by the input variable.
-    // Be sure to user integer values only.
+	// TODO: Use Timer 2 to delay for precisely (as precise as possible) usDelay
+	// microseconds provided by the input variable.
+	//
+	// Hint: Determine the configuration for the PR1 setting that provides for a
+	// one microsecond delay, and multiply this by the input variable.
+	// Be sure to user integer values only.
 
-    /**********************************************/
+/**********************************************/
     T2CONbits.TON = 0;  // Turn timer 2 off
     IFS0bits.T2IF = 0;  // reset timer 2 interrupt flag
     TMR2 = 0;           // resets timer 2 to 0
@@ -74,7 +75,7 @@ void DelayUs(unsigned int usDelay) {
 
 
 
-    /*****************************************************/
+/*****************************************************/
 }
 
 // ******************************************************************************************* //
@@ -94,12 +95,12 @@ void DelayUs(unsigned int usDelay) {
 
 void EnableLCD(unsigned char commandType, unsigned usDelay) {
 
-    LCD_RS = commandType;
-    DelayUs(usDelay);
-    LCD_E = 1;
-    DelayUs(usDelay);
-    LCD_E = 0;
-    DelayUs(usDelay);
+	LCD_RS = commandType;
+        DelayUs(usDelay);
+	LCD_E = 1;
+        DelayUs(usDelay);
+	LCD_E = 0;
+        DelayUs(usDelay);
 }
 
 // ******************************************************************************************* //
@@ -117,31 +118,31 @@ void EnableLCD(unsigned char commandType, unsigned usDelay) {
 
 void WriteLCD(unsigned char word, unsigned commandType, unsigned usDelay) {
 
-    // TODO: Using bit masking and shift operations, write most significant bits to correct
-    // bits of the LCD_D signal (i.e. #define used to map internal name to LATB)
-    // and enable the LCD for the correct command.
+	// TODO: Using bit masking and shift operations, write most significant bits to correct
+	// bits of the LCD_D signal (i.e. #define used to map internal name to LATB)
+	// and enable the LCD for the correct command.
 
     //set up most significant (ms) and least significant (ls) chunks of data
-    int bits_ms = (word&0xF0)<<8;  // store the most significant bits into bits_ms
-    int bits_ls = (word&0x0F)<<12;        // store the least significant bits into bits_ls
-    LCD_D = (LCD_D & 0x0FFF) | (bits_ms);
-    EnableLCD(commandType, usDelay);
-    LCD_D = (LCD_D & 0x0FFF) | (bits_ls);
-    EnableLCD(commandType, usDelay);
+	int bits_ms = (word&0xF0)<<8;  // store the most significant bits into bits_ms
+	int bits_ls = (word&0x0F)<<12;        // store the least significant bits into bits_ls
+	LCD_D = (LCD_D & 0x0FFF) | (bits_ms);
+        EnableLCD(commandType, usDelay);
+        LCD_D = (LCD_D & 0x0FFF) | (bits_ls);
+        EnableLCD(commandType, usDelay);
 
 
 
 
-    // TODO: Using bit masking and shift operations, write least significant bits to correct
-    // bits of the LCD_D signal (i.e. #define used to map internal name to LATB)
-    // and enable the LCD for the correct command.
-    //
-    //        LCD_E = 1;
-    //        DelayUs(usDelay);
-    //	LCD_D = (LCD_D & 0x0FFF) | (bits_ls << 12);
-    //        DelayUs(usDelay);
-    //	LCD_E = 0;
-    //        DelayUs(usDelay);
+	// TODO: Using bit masking and shift operations, write least significant bits to correct
+	// bits of the LCD_D signal (i.e. #define used to map internal name to LATB)
+	// and enable the LCD for the correct command.
+//
+//        LCD_E = 1;
+//        DelayUs(usDelay);
+//	LCD_D = (LCD_D & 0x0FFF) | (bits_ls << 12);
+//        DelayUs(usDelay);
+//	LCD_E = 0;
+//        DelayUs(usDelay);
 }
 
 // ******************************************************************************************* //
@@ -152,61 +153,61 @@ void WriteLCD(unsigned char word, unsigned commandType, unsigned usDelay) {
 
 void LCDInitialize(void) {
 
-    // Setup D, RS, and E to be outputs (0).
+	// Setup D, RS, and E to be outputs (0).
 
-    LCD_TRIS_D7 = 0;	// D7
-    LCD_TRIS_D6 = 0;	// D6
-    LCD_TRIS_D5 = 0;	// D5
-    LCD_TRIS_D4 = 0;	// D4
-    LCD_TRIS_RS = 0;	// RS
-    LCD_TRIS_E  = 0;	// E
+        LCD_TRIS_D7 = 0;	// D7
+	LCD_TRIS_D6 = 0;	// D6
+	LCD_TRIS_D5 = 0;	// D5
+	LCD_TRIS_D4 = 0;	// D4
+	LCD_TRIS_RS = 0;	// RS
+	LCD_TRIS_E  = 0;	// E
 
-    // Initilization sequence utilizes specific LCD commands before the general configuration
-    // commands can be utilized. The first few initilition commands cannot be done using the
-    // WriteLCD function. Additionally, the specific sequence and timing is very important.
+	// Initilization sequence utilizes specific LCD commands before the general configuration
+	// commands can be utilized. The first few initilition commands cannot be done using the
+	// WriteLCD function. Additionally, the specific sequence and timing is very important.
 
-    LCD_D = (LCD_D & 0x0FFF) | 0x0000; // sets bits 15-12 to 0, leaves bits 11-0 as they are
-    LCD_RS = 0;
-    LCD_E = 0;
-    DelayUs(15000);
+        LCD_D = (LCD_D & 0x0FFF) | 0x0000; // sets bits 15-12 to 0, leaves bits 11-0 as they are
+	LCD_RS = 0;
+	LCD_E = 0;
+	DelayUs(15000);
 
-    LCD_D = (LCD_D & 0x0FFF) | 0x3000; // sets bits 15-12 to 0, leaves bits 11-0 as they are, sets bits 15-12 to 0 0 1 1
+	LCD_D = (LCD_D & 0x0FFF) | 0x3000; // sets bits 15-12 to 0, leaves bits 11-0 as they are, sets bits 15-12 to 0 0 1 1
 
-    EnableLCD(LCD_WRITE_CONTROL, 4100); // calls the Enable LCD function with a command 0 and a delay of 4100 microseconds
+	EnableLCD(LCD_WRITE_CONTROL, 4100); // calls the Enable LCD function with a command 0 and a delay of 4100 microseconds
 
-    LCD_D = (LCD_D & 0x0FFF) | 0x3000;
+        LCD_D = (LCD_D & 0x0FFF) | 0x3000;
 
-    EnableLCD(LCD_WRITE_CONTROL, 100);
+	EnableLCD(LCD_WRITE_CONTROL, 100);
 
-    // Enable 4-bit interface
+	// Enable 4-bit interface
 
-    WriteLCD(0x32, LCD_WRITE_CONTROL, 100); //  msb sent first 0010 0011
+        WriteLCD(0x32, LCD_WRITE_CONTROL, 100); //  msb sent first 0010 0011
 
-    // Function Set (specifies data width, lines, and font.)
+	// Function Set (specifies data width, lines, and font.)
 
-    WriteLCD(0x28, LCD_WRITE_CONTROL, 44); // msb sent first 1000 0010
+        WriteLCD(0x28, LCD_WRITE_CONTROL, 44); // msb sent first 1000 0010
 
-    // 4-bit mode initialization is complete. We can now configure the various LCD
-    // options to control how the LCD will function.
+	// 4-bit mode initialization is complete. We can now configure the various LCD
+	// options to control how the LCD will function.
 
-    // TODO: Display On/Off Control
-    // Turn Display (D) Off
+	// TODO: Display On/Off Control
+	// Turn Display (D) Off
 
-    WriteLCD(0x08, LCD_WRITE_CONTROL, 44); //  msb sent first 1000 0000
+        WriteLCD(0x08, LCD_WRITE_CONTROL, 44); //  msb sent first 1000 0000
 
-    // TODO: Clear Display
+	// TODO: Clear Display
 
-    WriteLCD(0x01, LCD_WRITE_CONTROL, 1800); // 0001 0000
+        WriteLCD(0x01, LCD_WRITE_CONTROL, 1800); // 0001 0000
 
-    // TODO: Entry Mode Set
-    // Set Increment Display, No Shift (i.e. cursor move)
+	// TODO: Entry Mode Set
+	// Set Increment Display, No Shift (i.e. cursor move)
 
-    WriteLCD(0x06, LCD_WRITE_CONTROL, 44); // 0110 0000
+        WriteLCD(0x06, LCD_WRITE_CONTROL, 44); // 0110 0000
 
-    // TODO: Display On/Off Control
-    // Turn Display (D) On, Cursor (C) Off, and Blink(B) Off
+	// TODO: Display On/Off Control
+	// Turn Display (D) On, Cursor (C) Off, and Blink(B) Off
 
-    WriteLCD(0x0C, LCD_WRITE_CONTROL, 44); // 1100 0000
+        WriteLCD(0x0C, LCD_WRITE_CONTROL, 44); // 1100 0000
 }
 
 // ******************************************************************************************* //
@@ -216,8 +217,8 @@ void LCDInitialize(void) {
 
 void LCDClear(void) {
 
-    // TODO: Write the proper control instruction to clear the screen ensuring
-    // the proper delay is utilized.
+	// TODO: Write the proper control instruction to clear the screen ensuring
+	// the proper delay is utilized.
 
     WriteLCD(0x01, LCD_WRITE_CONTROL, 1800);
 
@@ -236,25 +237,25 @@ void LCDClear(void) {
 
 void LCDMoveCursor(unsigned char x, unsigned char y) {
 
-    // TODO: Write the propoer control instruction to move the cursor to the specified
-    // (x,y) coordinate. This operation should be performance as a single control
-    // control instruction, i.e. a single call the WriteLCD() function.
+	// TODO: Write the propoer control instruction to move the cursor to the specified
+	// (x,y) coordinate. This operation should be performance as a single control
+	// control instruction, i.e. a single call the WriteLCD() function.
 
-    //     //Return home
-    //    WriteLCD(0x02, LCD_WRITE_CONTROL, 40);
-    //
-    //    //Shift to given coordinate
-    //    int i;
-    //    for(i=0; i = x*8 + y; i++) {
-    //        WriteLCD(0x14, LCD_WRITE_CONTROL, 40);
-    //    }
-    unsigned char tempAddress = 0;
-    if (x>0)
-        tempAddress = 40 + y;
-    else
-        tempAddress = y;
-    tempAddress|=0x80; //add 1 at 7th bit
-    WriteLCD(tempAddress, LCD_WRITE_CONTROL, 40);
+//     //Return home
+//    WriteLCD(0x02, LCD_WRITE_CONTROL, 40);
+//
+//    //Shift to given coordinate
+//    int i;
+//    for(i=0; i = x*8 + y; i++) {
+//        WriteLCD(0x14, LCD_WRITE_CONTROL, 40);
+//    }
+    	unsigned char tempAddress = 0;
+	if (x>0)
+		tempAddress = 40 + y;
+	else
+		tempAddress = y;
+	tempAddress|=0x80; //add 1 at 7th bit
+	WriteLCD(tempAddress, LCD_WRITE_CONTROL, 40);
 
 }
 
@@ -268,8 +269,8 @@ void LCDMoveCursor(unsigned char x, unsigned char y) {
 
 void LCDPrintChar(char c) {
 
-    // TODO: Write the ASCII character provide as input to the LCD display ensuring
-    // the proper delay is utilized.
+	// TODO: Write the ASCII character provide as input to the LCD display ensuring
+	// the proper delay is utilized.
 
     WriteLCD(c, LCD_WRITE_DATA, 51);
 
