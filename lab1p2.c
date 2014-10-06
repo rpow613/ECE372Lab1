@@ -1,9 +1,9 @@
 /**************************************************************************************************/
 
 /*
- * File: Lab1Part2
- * File: lab1p2.c
- * Team: Lambda^3
+ * File:    Lab1Part2
+ * File:    lab1p2.c
+ * Team:    Lambda^3
  * Members: Chris Houseman
  *          Randy Martinez
  *          Rachel Powers
@@ -63,29 +63,37 @@ _CONFIG2( IESO_OFF & SOSCSEL_SOSC & WUTSEL_LEG & FNOSC_PRIPLL & FCKSM_CSDCMD & O
 //           service routine but will be read in the main execution loop.
 //        2. Declared as unsigned char as the varaible will only store the values between
 //           0 and 10.
-//ADDED CODE
-volatile int state = 0; // variable to keep track of timer state
-volatile int flagSwitch = 0;
-volatile int flagHundsMilli = 0;
-volatile int flagUnitsSec = 0;
-volatile int flagTensSec=0;
-volatile int flagUnitsMin=0;
-volatile int flagTensMin=0;
-//END ADDED CODE
-volatile unsigned char cnt;
-volatile unsigned char cntTensMin;
-volatile unsigned char cntUnitsMin;
-volatile unsigned char cntTensSec;
-volatile unsigned char cntUnitsSec;
-volatile unsigned char cntHundsMilli;
-volatile unsigned char cntTensMilli;
+
+// Added variable to keep track of timer state. Possible states include 0-the initialization state,
+// 1-the running state, and 2-the stopped state
+volatile int state = 0;         //system starts in the initialization state.
+
+// Added variable to keep track of which button was pressed in the change notification interrupt
+volatile int flagSwitch = 0;        // flagSwitch should start at 0 to indicate no switch has been pressed
+
+// Added flags that determine when to print out each digit in the timer and also when the timer
+// has "rolled over" and the next digit should be incremented.
+volatile int flagHundsMilli = 0;    // flag that is set when a 10th of a second has elapsed
+volatile int flagUnitsSec = 0;      // flag that is set when a second has elapsed
+volatile int flagTensSec=0;         // flag that is set when ten seconds have elapsed
+volatile int flagUnitsMin=0;        // flag that is set when a minute has elapsed
+volatile int flagTensMin=0;         // flag that is set when ten minutes have elapsed
+
+// Added variables for each digit in the stopwatch.
+volatile unsigned char cntTensMin;      // counts how many ten minute periods have elapsed
+volatile unsigned char cntUnitsMin;     // counts how many single minute periods have elapsed
+volatile unsigned char cntTensSec;      // counts how many ten second periods have elapsed
+volatile unsigned char cntUnitsSec;     // counts how many single second periods have elapsed
+volatile unsigned char cntHundsMilli;   // counts how many hundred millisecond periods have elapsed
+volatile unsigned char cntTensMilli;    // counts how many ten millisecond periods have elapsed
+volatile unsigned char cnt;             // counts how many ten millisecond periods have elapsed
 
 unsigned char command;
 // ******************************************************************************************* //
 
 int main(void)
 {
-    //ADDED CODE
+    
     // Configure AD1PCFG register for configuring input pins between analog input
     // and digital IO.
 	AD1PCFGbits.PCFG4 = 1;      //digital setting for switch
@@ -94,12 +102,12 @@ int main(void)
     // I01 is RA0 and j PIN 2
     // I02 is RA1 and j PIN 3
 	TRISAbits.TRISA0 = 0; //set IO1 to output
-        TRISAbits.TRISA1 = 0; //set IO2 to output
+    TRISAbits.TRISA1 = 0; //set IO2 to output
 
 
 
     // Configure LAT register bits to initialize Right LED to on.
-        LATAbits.LATA0 = 0; //initialize red led to on
+    LATAbits.LATA0 = 0; //initialize red led to on
 	LATAbits.LATA1 = 1; //initialize green LED to off
 
 
@@ -118,20 +126,18 @@ int main(void)
 	CNPU1bits.CN6PUE = 1;
 
     //Configure switch for reset
-        TRISBbits.TRISB5 = 1;//sets SW1 to input
+    TRISBbits.TRISB5 = 1;//sets SW1 to input
 
 
+    //Enable CN interrupts for switches
+    CNEN2bits.CN27IE = 1;
+    CNEN1bits.CN6IE = 1;
+    IFS1bits.CNIF = 0;
+    IEC1bits.CNIE = 1;
 
 
-    //TODO: enable CN interrupts for switches
-        CNEN2bits.CN27IE = 1;
-        CNEN1bits.CN6IE = 1;
-        IFS1bits.CNIF = 0;
-        IEC1bits.CNIE = 1;
-
-
-        //END ADDED CODE
-    // The following provides a demo configuration of Timer 1 in which
+    
+    // The following provides a configuration of Timer 1 in which
     // the Timer 1 interrupt service routine will be executed every 10 milliseconds
 	PR1 = 575;
 	TMR1 = 0;
@@ -171,11 +177,14 @@ int main(void)
 
 	while(1)
 	{
-        //ADDED CODE:
+        
             switch(state){
+                    
                 //State 0: Initialization State
                 case 0:
-                    //initaliza LCD, if RB2 is pressed, switch to start state
+                    // initaliza LCD, if RB2 is pressed, switch to start state
+                    // reset stopwatch display to zero, turn timer 1 off, set
+                    // all display variables to zero.
                     TMR1=0;
                     LCDInitialize();
                     LCDPrintString("TmrReset");
@@ -211,6 +220,7 @@ int main(void)
                         LCDMoveCursor(1,1);
                         LCDPrintChar(cntUnitsMin+'0');
                     }
+                    //change tens seconds place
                     if (flagTensSec == 1){
                         flagTensSec=0;
                         LCDMoveCursor(1,3);
@@ -222,8 +232,6 @@ int main(void)
                         LCDMoveCursor(1,4);
                         LCDPrintChar(cntUnitsSec+'0');
                     }
-//                    LCDMoveCursor(1,4);
-//                    LCDPrintChar(cntUnitsSec+'0');
 //                  //change hundred milliseconds character
                     if (flagHundsMilli == 1){
                         flagHundsMilli = 0;
@@ -234,8 +242,8 @@ int main(void)
                     LCDMoveCursor(1,7);
                     LCDPrintChar(cntTensMilli+'0');
                     break;
+                    
                 //State 2: Stop Stopwatch
-
                 case 2:
                     LCDMoveCursor(0,0);
                     LCDPrintString("Stopped:");
@@ -243,15 +251,8 @@ int main(void)
                     //stop timer and wait for reset or start
                     break;
 
-
-//                default:
-//                    LCDMoveCursor(0,0);
-//                    LCDPrintString("Stopped:");
-//                    T1CONbits.TON = 0;
             }
 
-
-        //END ADDED CODE:
 
 
 	}
@@ -279,23 +280,29 @@ void __attribute__((interrupt,auto_psv)) _T1Interrupt(void)
 
 	// Updates cnt to wraparound from 9 to 0 for this demo.
 	cnt = (cnt<9)?(cnt+1):0;
+        //set ten milliseconds count to the value of cnt
         cntTensMilli=cnt;
+        //if cntTensMilli has wrapped around, increment hundred millisecond place
         if (cntTensMilli == 0){
             flagHundsMilli = 1;
             cntHundsMilli = (cntHundsMilli<9)?(cntHundsMilli+1):0;
         }
+        //if the cntHundsMilli has wrapped around, increment seconds place
         if (cntHundsMilli==0 && flagHundsMilli ==1){
              flagUnitsSec=1;
              cntUnitsSec = (cntUnitsSec<9)?(cntUnitsSec+1):0;
         }
+        //if the cntUnitsSec has wrapped around, increment tens seconds plce
         if (cntUnitsSec==0 && flagUnitsSec ==1){
              flagTensSec=1;
              cntTensSec = (cntTensSec<5)?(cntTensSec+1):0;
         }
+        //if cntTensSec has wrapped around, increment minutes place
         if (cntTensSec==0 && flagTensSec ==1){
              flagUnitsMin=1;
              cntUnitsMin = (cntUnitsMin<9)?(cntUnitsMin+1):0;
         }
+        //if cntUnitsMin has wrapped around, increment tens minutes place
         if (cntUnitsMin==0 && flagUnitsMin ==1){
              flagTensMin=1;
              cntTensMin = (cntTensMin<5)?(cntTensMin+1):0;
@@ -314,22 +321,28 @@ void __attribute__((interrupt,auto_psv)) _T1Interrupt(void)
 //ADDED CODE:
 void __attribute__((interrupt,auto_psv)) _CNInterrupt(void)
 {
-//TODO: CHECK WHICH FLAG WAS SET
+    //Check which button was pressed
     if (PORTBbits.RB5 == 0) {
-        flagSwitch=1;
+        flagSwitch=1;       //stopwatch reset button was pressed
     }
     else if (PORTBbits.RB2 == 0) {
-        flagSwitch=2;
+        flagSwitch=2;       //stopwatch start/stop button was pressed
     }
-
+    
+    // Clear CN interrupt flag to allow another CN interrupt to occur.
     IFS1bits.CNIF = 0;
-// Clear CN interrupt flag to allow another CN interrupt to occur.
+
+    //if reset button was pressed, switch to initialization state and reset
+    //LEDs to original states
     if (flagSwitch==1 && PORTBbits.RB5 == 1) {
         state = 0;
         LATAbits.LATA0=0;
         LATAbits.LATA1=1;
     }
+    //if start/stop button was pressed, alternate between running and stopping
+    //depending on initial state
     else if (flagSwitch == 2 && PORTBbits.RB2 ==1){
+        
         if(state == 0){       //should this be debounced?
             state = 1;
             LATA ^= 0x0003;  //toggles leds a0 and a1;
@@ -344,7 +357,7 @@ void __attribute__((interrupt,auto_psv)) _CNInterrupt(void)
         else if(state == 2){
             state = 1;
             LATA ^= 0x0003;  //toggles leds a0 and a1;
-            T1CONbits.TON = 1;
+            T1CONbits.TON = 1; //turn timer on
         }
     }
 }

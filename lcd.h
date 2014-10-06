@@ -1,8 +1,8 @@
 /**************************************************************************************************/
 
 /*
- * File: lcd.h
- * Team: Lambda^3
+ * File:    lcd.h
+ * Team:    Lambda^3
  * Members: Chris Houseman
  *          Randy Martinez
  *          Rachel Powers
@@ -10,7 +10,8 @@
  *
  * Date: October 2, 2014
  *
- * Description: Header file for lcd functions
+ * Description: Header file for lcd functions. This file was taken directly from provided 
+ *              lcd.h file.
  *
  */
 

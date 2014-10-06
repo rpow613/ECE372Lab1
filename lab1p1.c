@@ -69,11 +69,11 @@ volatile int flag = 0;      //variable that stops while loop in DebounceDelay()/
 //DebounceDelay() function to debounces button press
 // and button release in software.
 void DebounceDelay() {
-	TMR1=0;
-	T1CONbits.TON=1;
+	TMR1=0;             //clear timer
+	T1CONbits.TON=1;    //turn timer on
 
 	while(flag!=1); //while loop will cycle until flag for timer one becomes 1
-        flag=0;
+        flag=0;             //reset flag to 0 after while loop exits
         T1CONbits.TON=0;	//turn off timer
 		//reset flag
 
@@ -120,7 +120,6 @@ int main(void)
 // Configure TRIS register bits for swtich input.
     //I05 is RB2
     //pin number six on j2
-
 	TRISBbits.TRISB2 = 1;
 
 // Configure CNPU register bits to enable internal pullup resistor for switch input.
@@ -153,7 +152,7 @@ int main(void)
 
 	while(1)
 	{
-		// TODO: For each distinct button press, alternate which
+		// For each distinct button press, alternate which
 		// LED is illuminate (on).
 		if(PORTBbits.RB2 == 0)
 		{
@@ -175,7 +174,7 @@ int main(void)
 void __attribute__((interrupt,auto_psv)) _T1Interrupt(void){
    //set flag to 1 if interrupt occurs
     flag = 1;
-    IFS0bits.T1IF = 0;
+    IFS0bits.T1IF = 0;      //reset interrupt flag
 
 
 }
