@@ -236,12 +236,12 @@ void LCDMoveCursor(unsigned char x, unsigned char y) {
 
     unsigned char tempAddress = 0;
     if (x>0) {
-		tempAddress = 40 + y;
+		tempAddress = 0x40 + y;
     }
 	else {
-		tempAddress = y;
-        tempAddress|=0x80; //add 1 at 7th bit
+            tempAddress = y;
     }
+        tempAddress|=0x80; //add 1 at 7th bit
 	WriteLCD(tempAddress, LCD_WRITE_CONTROL, 40);
 
 }
